@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music Studio · Lyria 3 Pro</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23e8a24a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M9 18V5l12-2v13'/><circle cx='6' cy='18' r='3'/><circle cx='18' cy='16' r='3'/></svg>" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1><span class="ic-slot" data-icon="music" data-icon-size="20"></span> Music Studio <span class="version">1.0</span></h1>
+      <div class="topbar-right">
+        <span id="creditBalance" class="balance-pill" hidden>…</span>
+        <span id="keyStatus" class="key-status" title="API key status">checking…</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- ============ LEFT: the form ============ -->
+    <form id="musicForm" class="panel form">
+
+      <!-- Always-visible output selector -->
+      <div class="output-bar">
+        <div class="field">
+          <label for="model">Model</label>
+          <select id="model" name="model">
+            <option value="pro">Lyria 3 Pro — full song (up to ~3 min)</option>
+            <option value="clip">Lyria 3 Clip — exactly 30s, best for loops</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="format">Format</label>
+          <select id="format" name="format">
+            <option value="mp3">MP3 — compressed</option>
+            <option value="wav">WAV — lossless</option>
+          </select>
+        </div>
+        <div class="field cost-field">
+          <label>Estimated cost <span class="hint">music + any AI helpers · per generation</span></label>
+          <div id="costEstimate" class="cost-estimate"></div>
+        </div>
+        <div class="field seed-field">
+          <label for="seed">Seed <span class="hint">(blank = random each time; set to reproduce)</span></label>
+          <div class="seed-row">
+            <input id="seed" name="seed" type="number" min="0" placeholder="random" />
+            <button type="button" id="seedRandom" class="btn ghost icon-btn" title="Pick a random seed" aria-label="Random seed"><span class="ic-slot" data-icon="dice"></span></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Style ===== -->
+      <details class="group" open>
+        <summary class="group-head">
+          <span class="group-title">Style</span>
+          <span class="group-sub">genre · era · mood · atmosphere · tempo</span>
+        </summary>
+        <div class="group-body">
+          <div class="field">
+            <label>Reference image <span class="hint">(optional — steers vibe, genre &amp; lyrics; experimental)</span></label>
+            <input type="file" id="imageInput" accept="image/*" hidden />
+            <div id="imagePlaceholder" class="image-drop">
+              <button type="button" id="imagePick" class="btn ghost small"><span class="ic-slot" data-icon="image"></span> Choose image</button>
+              <span class="hint">PNG or JPG · Lyria uses it to set the mood</span>
+            </div>
+            <div id="imagePreview" class="image-preview" hidden>
+              <img id="imageThumb" alt="Reference image preview" />
+              <button type="button" id="imageClear" class="btn ghost small"><span class="ic-slot" data-icon="trash"></span> Remove</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Genre / Style <span class="hint">(pick up to 2, or type your own)</span></label>
+            <div id="genres" class="chips" data-name="genres" data-max="2"></div>
+            <input id="genreCustom" name="genreCustom" placeholder="Add a blend, e.g. K-pop with a Motown edge" />
+          </div>
+
+          <div class="field">
+            <label>Era <span class="hint">(pick one, or type your own)</span></label>
+            <div id="eras" class="chips" data-name="eras" data-max="1"></div>
+            <input id="eraCustom" name="eraCustom" placeholder="Or a nuance, e.g. early 90s, late 60s, Y2K" />
+          </div>
+
+          <div class="field">
+            <label>Mood <span class="hint">(pick any, or type your own)</span></label>
+            <div id="moods" class="chips" data-name="moods"></div>
+            <input id="moodCustom" name="moodCustom" placeholder="Add custom, comma-separated: e.g. bittersweet, defiant" />
+          </div>
+
+          <div class="field">
+            <label>Atmosphere <span class="hint">(pick any, or type your own)</span></label>
+            <div id="atmospheres" class="chips" data-name="atmospheres"></div>
+            <input id="atmosphereCustom" name="atmosphereCustom" placeholder="Add custom, comma-separated: e.g. late-night city, rain-soaked" />
+          </div>
+
+          <div class="row">
+            <div class="field">
+              <label for="bpm">Tempo (BPM) <span class="hint">optional</span></label>
+              <input id="bpm" name="bpm" type="number" min="30" max="240" placeholder="e.g. 120" />
+            </div>
+            <div class="field">
+              <label for="tempoDescriptive">…or describe it</label>
+              <input id="tempoDescriptive" name="tempoDescriptive" placeholder="e.g. laid-back groove" />
+            </div>
+          </div>
+
+          <div class="row row-3">
+            <div class="field">
+              <label for="key">Key <span class="hint">optional</span></label>
+              <select id="key" name="key">
+                <option value="">(none)</option>
+                <option>C Major</option><option>G Major</option><option>D Major</option>
+                <option>A Major</option><option>E Major</option><option>F Major</option>
+                <option>B&#9837; Major</option>
+                <option>A minor</option><option>E minor</option><option>D minor</option>
+                <option>C minor</option><option>G minor</option><option>F&#9839; minor</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="timeSignature">Time signature</label>
+              <select id="timeSignature" name="timeSignature">
+                <option value="">(none)</option>
+                <option>4/4</option><option>3/4</option><option>2/4</option>
+                <option>6/8</option><option>12/8</option><option>5/4</option>
+                <optgroup label="Experimental — Greek meters">
+                  <option>7/8</option><option>9/8</option><option>5/8</option>
+                </optgroup>
+              </select>
+            </div>
+            <div class="field">
+              <label for="mode">Mode / scale</label>
+              <select id="mode" name="mode">
+                <option value="">(none)</option>
+                <option>major</option><option>minor</option><option>harmonic minor</option>
+                <option>Dorian</option><option>Phrygian</option><option>Lydian</option>
+                <option>Mixolydian</option><option>Locrian</option>
+                <option>pentatonic</option><option>blues</option>
+                <optgroup label="Experimental — Greek dromoi">
+                  <option>Hijaz</option><option>Rast</option><option>Ussak</option>
+                  <option>Sabah</option><option>Kartsigar</option><option>Niavent</option>
+                </optgroup>
+              </select>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- ===== Instruments ===== -->
+      <details class="group">
+        <summary class="group-head">
+          <span class="group-title">Instruments</span>
+          <span class="group-sub">keyboards · drums · mallets · strings · winds · texture</span>
+        </summary>
+        <div class="group-body">
+          <div class="field">
+            <label>Keyboards</label>
+            <div id="instrKeys" class="chips" data-name="instrKeys"></div>
+          </div>
+          <div class="field">
+            <label>Drums / Percussion</label>
+            <div id="instrDrums" class="chips" data-name="instrDrums"></div>
+          </div>
+          <div class="field">
+            <label>Mallets / Tuned percussion</label>
+            <div id="instrMallets" class="chips" data-name="instrMallets"></div>
+          </div>
+          <div class="field">
+            <label>Strings / Guitars</label>
+            <div id="instrStrings" class="chips" data-name="instrStrings"></div>
+          </div>
+          <div class="field">
+            <label>Brass &amp; Woodwinds</label>
+            <div id="instrWinds" class="chips" data-name="instrWinds"></div>
+          </div>
+          <div class="field">
+            <label>Texture / FX</label>
+            <div id="instrTexture" class="chips" data-name="instrTexture"></div>
+          </div>
+          <input id="instrCustom" name="instrCustom" placeholder="Add any other instruments, comma-separated: e.g. theremin, glockenspiel" />
+        </div>
+      </details>
+
+      <!-- ===== Vocals & Lyrics ===== -->
+      <details class="group">
+        <summary class="group-head">
+          <span class="group-title">Vocals &amp; Lyrics</span>
+          <span class="group-sub">voice · language · lyrics</span>
+        </summary>
+        <div class="group-body">
+          <label class="checkbox">
+            <input type="checkbox" id="instrumental" name="instrumental" />
+            Instrumental only (no vocals)
+          </label>
+
+          <div id="vocalOptions">
+            <div class="field">
+              <label>Range / gender <span class="hint">(pick any, or type your own)</span></label>
+              <div id="vocalGenders" class="chips" data-name="vocalGenders"></div>
+              <input id="vocalGenderCustom" name="vocalGenderCustom" placeholder="Add custom, comma-separated: e.g. male baritone, boy soprano" />
+            </div>
+            <div class="field">
+              <label>Texture <span class="hint">(pick any, or type your own)</span></label>
+              <div id="vocalTextures" class="chips" data-name="vocalTextures"></div>
+              <input id="vocalTextureCustom" name="vocalTextureCustom" placeholder="Add custom, comma-separated: e.g. airy, autotuned" />
+            </div>
+            <div class="field">
+              <label>Language <span class="hint">(pick one, or type your own)</span></label>
+              <div id="languages" class="chips" data-name="languages" data-max="1"></div>
+              <input id="languageCustom" name="languageCustom" placeholder="Or type another, e.g. Italian" />
+            </div>
+
+            <div class="lyric-helper">
+              <div class="lyric-helper-head"><span class="ic-slot" data-icon="sparkles"></span> Write lyrics with AI <span class="hint">(drafts into the box below — edit freely after)</span></div>
+              <input id="lyricTheme" placeholder="Theme / topic, e.g. chasing a dream in a big city" />
+              <textarea id="lyricStory" rows="2" placeholder="Optional: story, details, names or keywords to weave in"></textarea>
+              <div class="row">
+                <div class="field">
+                  <label for="lyricStructure">Structure</label>
+                  <select id="lyricStructure">
+                    <option value="">(writer's choice)</option>
+                    <option>Verse - Chorus - Verse - Chorus - Bridge - Chorus</option>
+                    <option>Verse - Pre-Chorus - Chorus - Verse - Pre-Chorus - Chorus</option>
+                    <option>Intro - Verse - Chorus - Verse - Chorus - Outro</option>
+                    <option>Verse - Chorus (short, loop-friendly)</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="lyricRhyme">Rhyme</label>
+                  <select id="lyricRhyme">
+                    <option value="">(natural)</option>
+                    <option>simple AABB</option>
+                    <option>alternating ABAB</option>
+                    <option>free verse, minimal rhyme</option>
+                  </select>
+                </div>
+              </div>
+              <div class="lyric-helper-foot">
+                <label class="checkbox" title="Affects only the lyrics the AI writes. Strongly explicit lyrics may still be blocked by Lyria's safety filter when generating the music.">
+                  <input type="checkbox" id="lyricExplicit" /> Allow explicit language
+                  <span class="hint">(lyrics only; heavy content may be blocked later)</span>
+                </label>
+                <button type="button" id="genLyricsBtn" class="btn ghost small"><span class="ic-slot" data-icon="sparkles"></span> Generate lyrics</button>
+              </div>
+              <div id="lyricStatus" class="lyric-status"></div>
+            </div>
+
+            <div class="field">
+              <label for="lyrics">Lyrics <span class="hint">(use [Verse], [Chorus]; parentheses for echoes; [0:00 - 0:10] for timing)</span></label>
+              <textarea id="lyrics" name="lyrics" rows="8" placeholder="[Verse]&#10;Walking through the neon glow, city lights reflect below&#10;[Chorus]&#10;Let's go (go), let's go (go)"></textarea>
+            </div>
+          </div>
+        </div>
+      </details>
+
+      <!-- ===== Arrangement ===== -->
+      <details class="group">
+        <summary class="group-head">
+          <span class="group-title">Arrangement</span>
+          <span class="group-sub">structure &amp; production direction</span>
+        </summary>
+        <div class="group-body">
+          <div class="field">
+            <div class="field-head">
+              <label for="extraDetails">Extra details <span class="hint">(timestamps, transitions, dynamics)</span></label>
+              <button type="button" id="suggestArrBtn" class="btn ghost small"><span class="ic-slot" data-icon="wand"></span> Suggest arrangement</button>
+            </div>
+            <textarea id="extraDetails" name="extraDetails" rows="5" placeholder="e.g. [0:00 - 0:15] soft intro, then build into a driving beat — or click “Suggest arrangement” to draft this from your style + lyrics"></textarea>
+            <div id="arrStatus" class="lyric-status"></div>
+          </div>
+        </div>
+      </details>
+
+      <!-- Sticky action bar -->
+      <div class="actions">
+        <button type="button" id="previewBtn" class="btn ghost"><span class="ic-slot" data-icon="eye"></span> Preview prompt</button>
+        <button type="submit" id="generateBtn" class="btn primary"><span class="ic-slot" data-icon="play"></span> Generate music</button>
+      </div>
+    </form>
+
+    <!-- ============ RIGHT: prompt + result ============ -->
+    <section class="panel result">
+      <div class="field">
+        <label for="promptBox">Prompt sent to Lyria <span class="hint">(editable)</span></label>
+        <textarea id="promptBox" rows="8" placeholder="Fill in the form and click “Preview prompt”, or edit directly here."></textarea>
+        <div id="warnings" class="warnings"></div>
+      </div>
+
+      <div id="status" class="status" hidden></div>
+
+      <div id="player" class="player" hidden>
+        <audio id="audio" controls></audio>
+        <div class="player-actions">
+          <a id="downloadLink" class="btn ghost" download><span class="ic-slot" data-icon="download"></span> Download</a>
+        </div>
+      </div>
+
+      <details id="rawBox" class="raw" hidden>
+        <summary>Debug: raw response</summary>
+        <pre id="rawPre"></pre>
+      </details>
+    </section>
+
+    <!-- ============ FULL WIDTH: library / history ============ -->
+    <section class="panel history">
+      <div class="history-head">
+        <h2>Library <span id="trackCount" class="count"></span></h2>
+        <div class="history-controls">
+          <label class="lib-ctl">Sort
+            <select id="sortBy">
+              <option value="newest" selected>Newest first</option>
+              <option value="oldest">Oldest first</option>
+              <option value="name-asc">Name (A–Z)</option>
+              <option value="name-desc">Name (Z–A)</option>
+              <option value="largest">Largest</option>
+              <option value="smallest">Smallest</option>
+            </select>
+          </label>
+          <label class="lib-ctl">Per page
+            <select id="pageSize">
+              <option value="5" selected>5</option>
+              <option value="10">10</option>
+              <option value="20">20</option>
+            </select>
+          </label>
+          <button type="button" id="refreshTracks" class="btn ghost small"><span class="ic-slot" data-icon="refresh"></span> Refresh</button>
+        </div>
+      </div>
+      <div id="trackList" class="track-list">
+        <p class="empty">No tracks yet — generate one above.</p>
+      </div>
+      <div id="pagination" class="pagination" hidden></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        <span class="footer-brand">Music Studio <span class="footer-ver">1.0</span></span>
+        <span class="footer-by">Developed by Panos Vasilopoulos &amp; Claude</span>
+      </div>
+      <div class="footer-right">
+        <span>Music by <a href="https://openrouter.ai/google/lyria-3-pro-preview" target="_blank" rel="noopener noreferrer">Lyria&nbsp;3</a> · Lyrics &amp; arrangement by Claude</span>
+        <span class="footer-note">AI-generated audio · contains an inaudible SynthID watermark</span>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
