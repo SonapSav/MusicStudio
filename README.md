@@ -96,7 +96,12 @@ Create one at **<https://openrouter.ai/keys>** and make sure your account has cr
 ### 3. Clone and install
 
 ```bash
+# HTTPS
 git clone https://github.com/SonapSav/MusicStudio.git
+
+# or SSH (if you have an SSH key added to GitHub)
+git clone git@github.com:SonapSav/MusicStudio.git
+
 cd MusicStudio
 npm install
 ```
