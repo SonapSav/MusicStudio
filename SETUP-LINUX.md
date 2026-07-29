@@ -81,7 +81,9 @@ OPENROUTER_API_KEY=sk-or-...your key...
 npm start
 ```
 
-Open **http://localhost:3000** in a browser.
+Open the app at the port the server prints on startup. It's set by `PORT` in
+`.env` (defaults to `3000`); if you copied this project's `.env`, it's **3012**
+— so **http://localhost:3012**.
 
 To stop the server, press **Ctrl+C** in the terminal.
 
@@ -98,7 +100,7 @@ npm run dev
 | Problem | Fix |
 | --- | --- |
 | `.env` missing after copy | Dotfiles are hidden — press **Ctrl+H** in the file manager, or recreate from `.env.example` (step 3). |
-| Port 3000 already in use | Run on another port: `PORT=8080 npm start` |
+| Port already in use | Change the port via `PORT` in `.env` (this project uses `PORT=3012`), or run a one-off: `PORT=8080 npm start` |
 | `npm install` fails | It needs internet to fetch `express` + `dotenv`. Check your connection. After install, the app runs offline except for the actual OpenRouter API calls. |
 | "No API key" banner in the UI | `.env` is missing or `OPENROUTER_API_KEY` is blank. Fix `.env` and restart. |
 | `node: command not found` | Node didn't install — redo step 2. |

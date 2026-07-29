@@ -45,7 +45,10 @@ Your API key lives only in a local `.env` file and never reaches the browser.
    npm start
    ```
 
-4. Open <http://localhost:3000> in your browser.
+4. Open the app in your browser at the port the server prints on startup.
+   The port is set by `PORT` in `.env` (defaults to `3000`). **This install is
+   configured to run on port 3012** (`PORT=3012`) — so open
+   <http://localhost:3012>.
 
 ## Using it
 
@@ -132,14 +135,16 @@ The server binds to all interfaces, so other devices on the same Wi-Fi/LAN can
 reach it. On startup it prints the address to use, e.g.:
 
 ```
-Local:    http://localhost:3000
-Network:  http://192.168.0.53:3000
+Local:    http://localhost:3012
+Network:  http://192.168.0.53:3012
 ```
 
 Open the **Network** URL from a phone or another computer on the same network.
+(This install runs on port **3012**, set via `PORT` in `.env`; the default is 3000.)
 
 - **Firewall:** the first time, Windows may ask to allow Node.js on private
-  networks — allow it. If it won't connect, add an inbound rule for TCP 3000.
+  networks — allow it. If it won't connect, add an inbound rule for the port
+  in use (TCP 3012 here).
 - **Security:** there's no login, and anyone who opens it can generate music
   using **your** OpenRouter key (which costs money). Only expose it on a trusted
   network. To lock it back to this machine only, set `HOST=127.0.0.1` in `.env`.
