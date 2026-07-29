@@ -1,192 +1,218 @@
-# 🎵 MusicStudio
+<!-- Replace the placeholder images with your own screenshots when ready. -->
+<p align="center">
+  <img src="https://placehold.co/1200x480/0d0e12/e8a24a?text=Music+Studio" alt="Music Studio" width="100%" />
+</p>
 
-A small local web app that generates music with **Google Lyria 3 Pro** through the
-[OpenRouter](https://openrouter.ai) API. You fill in a form (genre, era, mood,
-instrumentation, tempo, vocals, lyrics…), the app assembles a prompt following the
-official Lyria prompting framework, sends it to Lyria, then plays the result and
-lets you download it.
+<h1 align="center">🎵 Music Studio</h1>
 
-## How it works
+<p align="center">
+  A self-hosted web app for generating music with <b>Google Lyria&nbsp;3</b> — with AI-written
+  lyrics, AI arrangement, and reference-image conditioning — all driven from one clean console.
+</p>
 
-```
-Browser UI  ──fetch──►  Local Node server  ──►  OpenRouter  ──►  Lyria 3 Pro
-(form + player)         (holds API key,
-                         builds the prompt)
-```
+<p align="center">
+  <img alt="Node.js ≥ 18" src="https://img.shields.io/badge/Node.js-%E2%89%A518-5FA04E?logo=node.js&logoColor=white" />
+  <img alt="Music: Lyria 3" src="https://img.shields.io/badge/music-Lyria%203-e8a24a" />
+  <img alt="Lyrics: Claude" src="https://img.shields.io/badge/lyrics%20%26%20arrangement-Claude-4fc8bd" />
+  <img alt="Self-hosted" src="https://img.shields.io/badge/self--hosted-local-999" />
+</p>
 
-Your API key lives only in a local `.env` file and never reaches the browser.
+---
 
-## Setup
+You run Music Studio on your own machine. It gives you a rich, pill-driven interface to describe
+a track — genre, era, mood, instruments, vocals, key, tempo — assembles a prompt following Lyria's
+own prompting framework, generates the audio, then plays, saves, and organizes it in a built-in
+library. It also uses **Claude** to write original lyrics and timestamped production arrangements
+for you.
 
-1. **Install dependencies**
+Everything talks to the [OpenRouter](https://openrouter.ai) API. Your API key stays on **your**
+server (in a git-ignored `.env`) and never reaches the browser.
 
-   ```bash
-   npm install
-   ```
+<p align="center">
+  <img src="https://placehold.co/1200x700/0d0e12/9aa0b0?text=App+Screenshot+%E2%80%94+Prompt+Builder" alt="Prompt builder screenshot" width="100%" />
+</p>
 
-2. **Add your OpenRouter API key**
+## ✨ Features
 
-   Copy the example env file and paste your key (get one at
-   <https://openrouter.ai/keys>):
+- **Rich prompt builder** — pick from pills for **Genre/Style**, **Era**, **Mood**, **Atmosphere**,
+  **Tempo**, and **Key / Time signature / Mode**. Every field also accepts your own free text.
+- **Categorized instruments** — Keyboards, Drums/Percussion, Mallets/Tuned percussion,
+  Strings/Guitars, Brass & Woodwinds, and Texture/FX.
+- **Vocals** — range/gender, texture, language, or fully instrumental.
+- **✨ AI lyrics (Claude)** — give a theme and get original, structured lyrics
+  (`[Verse]`/`[Chorus]`/`[Bridge]`) in the language of your choice.
+- **🪄 AI arrangement (Claude)** — turns your style + lyrics into concise, **timestamped**
+  production direction that sharpens what Lyria generates.
+- **🖼️ Reference image** — attach an image to steer the vibe, genre, and lyric direction.
+- **🎲 Seed & variations** — reproduce a result exactly, or spin a fresh variation of any track.
+- **📚 Library** — every track is saved and listed with its prompt, duration, and seed. Play,
+  download, rename inline, delete, **auto-name from the lyrics/style**, sort, and paginate.
+- **🎧 Output** — Lyria 3 **Pro** (full song, up to ~3 min) or **Clip** (exactly 30s); MP3 or
+  lossless WAV (Pro).
+- **💸 Cost awareness** — a per-model cost estimate and a **live OpenRouter credit balance** in the
+  header (turns amber/red when low).
+- **🌍 Greek music pack** — experimental genres (Rebetiko, Laïko, Cretan, …), instruments
+  (bouzouki, baglamas, lyra, …), meters (7/8, 9/8) and *dromoi* (Hijaz, Rast, …), clearly marked
+  as experimental.
+- **🖥️ Runs on your LAN too** — reach it from a phone or another computer on the same network.
 
-   ```bash
-   cp .env.example .env
-   ```
+<p align="center">
+  <img src="https://placehold.co/1200x700/0d0e12/9aa0b0?text=App+Screenshot+%E2%80%94+Library" alt="Library screenshot" width="100%" />
+</p>
 
-   Then edit `.env`:
-
-   ```
-   OPENROUTER_API_KEY=sk-or-...your key...
-   ```
-
-3. **Start the server**
-
-   ```bash
-   npm start
-   ```
-
-4. Open the app in your browser at the port the server prints on startup.
-   The port is set by `PORT` in `.env` (defaults to `3000`). **This install is
-   configured to run on port 3012** (`PORT=3012`) — so open
-   <http://localhost:3012>.
-
-## Using it
-
-1. Fill in as much or as little of the form as you like.
-2. Click **Preview prompt** to see (and edit) the exact text that will be sent —
-   this is free and makes no API call.
-3. Click **Generate music**. When it finishes, the track plays inline and a
-   **Download** button appears.
-
-### Writing lyrics with AI
-
-Inside the **Vocals** section (when *Instrumental* is off) there's a **✨ Write
-lyrics with AI** helper. Give it a theme (plus optional story/keywords,
-structure, and rhyme style) and click **Generate lyrics** — Claude Sonnet
-(via OpenRouter) drafts **original**, structured lyrics with `[Verse]` /
-`[Chorus]` / `[Bridge]` markers straight into the Lyrics box, reusing your
-Genre / Mood / Language selections. Everything is editable afterward.
-
-The lyric model is configurable via `LYRICS_MODEL` in `.env` (any OpenRouter
-chat model; defaults to `anthropic/claude-sonnet-5`). Lyrics are always original
-— the model is instructed never to imitate real artists or existing songs.
-
-### AI arrangement suggestions
-
-Next to **Extra details** there's a **Suggest arrangement** button. It sends your
-current style settings *and* the lyrics to a text model, which writes concise,
-**timestamped production direction** — section-by-section instrument entrances,
-builds, drops, transitions and mix textures — aligned to your `[Verse]`/`[Chorus]`
-structure and scaled to the target duration (30s clip vs. full Pro track). The
-result fills the Extra details box for you to edit. Configurable via
-`ENHANCE_MODEL` in `.env`.
-
-### Reference image (experimental)
-
-At the top of **Style** you can attach a reference image (PNG/JPG). Lyria uses it
-to steer the track's vibe, genre, and lyric direction. It's sent as a top-level
-`image` field (data URI) on the generation request.
-
-### Key / time signature / mode
-
-The Style section has a **Key**, **Time signature**, and **Mode / scale** row.
-These are added to the prompt as natural language ("In D minor, 9/8 time, and the
-Hijaz mode"). Greek meters (7/8, 9/8, 5/8) and *dromoi* (Hijaz, Rast, Ussak…) are
-grouped as experimental options.
-
-### Seed & variations
-
-Every generation records a **seed** (shown on the saved track). Leave the Seed
-field blank for a fresh random seed each time, or set it to reproduce a result.
-In the Library, the **dice** button on a track generates a **variation** — same
-prompt, new random seed.
-
-### Prompt framework
-
-The prompt is assembled as:
-
-> `[Genre/Era] + [Mood] + [Instrumentation] + [Tempo/Rhythm] + [Vocals/Language] + [Lyrics]`
-
-- **Lyrics** use the literal `Lyrics:` marker. You can use section markers like
-  `[Verse]`, `[Chorus]`, background echoes `(go)`, and timestamps `[0:00 - 0:10]`.
-- Toggle **Instrumental** to force a backing track with no vocals.
-
-## Models & pricing
-
-| Model                        | Length            | Notes                     |
-| ---------------------------- | ----------------- | ------------------------- |
-| `google/lyria-3-pro-preview` | up to ~3 min song | full structure, ~$0.08/song |
-| `google/lyria-3-clip-preview`| exactly 30s       | best for loops, ~$0.04/clip |
-
-*(Pricing per OpenRouter listings; check the site for current rates.)*
-
-## Project structure
+## 🧩 How it works
 
 ```
-server.js              Express server + API routes
-src/promptBuilder.js   Form data  -> Lyria prompt
-src/lyriaClient.js     OpenRouter call + audio extraction
+Browser UI  ──fetch──►  Local Node/Express server  ──►  OpenRouter  ──►  Lyria 3 (music)
+(prompt builder,        (holds the API key,                           └►  Claude (lyrics,
+ player, library)        builds prompts, saves audio)                     arrangement, naming)
+```
+
+The browser never sees your API key — it only talks to your local server, which proxies the calls.
+
+## 📋 Requirements
+
+- **Node.js ≥ 18** (uses the built-in `fetch`) — [nodejs.org](https://nodejs.org)
+- An **[OpenRouter](https://openrouter.ai) account with credit** — Lyria is a paid model
+  (roughly $0.04–$0.10 per track; see [Estimated cost](#-estimated-cost))
+- **git** (to clone)
+
+## 🚀 Getting started
+
+### 1. Install Node.js (if you don't have it)
+
+| OS | Install |
+| --- | --- |
+| **Windows** | Installer from [nodejs.org](https://nodejs.org), or `winget install OpenJS.NodeJS.LTS` |
+| **macOS** | `brew install node`, or the installer from [nodejs.org](https://nodejs.org) |
+| **Linux (Debian/Ubuntu)** | `curl -fsSL https://deb.nodesource.com/setup_20.x \| sudo -E bash - && sudo apt install -y nodejs` |
+
+Verify with `node --version` (should print v18 or newer).
+
+### 2. Get an OpenRouter API key
+
+Create one at **<https://openrouter.ai/keys>** and make sure your account has credit.
+
+### 3. Clone and install
+
+```bash
+git clone https://github.com/SonapSav/MusicStudio.git
+cd MusicStudio
+npm install
+```
+
+### 4. Add your key
+
+Copy the sample env file, then paste your key into it:
+
+| OS | Copy command |
+| --- | --- |
+| **macOS / Linux** | `cp .env.example .env` |
+| **Windows (PowerShell)** | `Copy-Item .env.example .env` |
+| **Windows (cmd)** | `copy .env.example .env` |
+
+Then edit `.env` and set:
+
+```
+OPENROUTER_API_KEY=sk-or-...your key...
+```
+
+`.env` is git-ignored, so your key is never committed.
+
+### 5. Run it
+
+```bash
+npm start          # or: npm run dev   (auto-reload on file changes)
+```
+
+The server prints its URL on startup — open it in your browser:
+
+```
+🎵 Music Studio running:
+   Local:    http://localhost:3012
+```
+
+> The port comes from `PORT` in `.env`. The provided `.env.example` uses **3012**; change it to
+> `3000` or anything you like.
+
+## ⚙️ Configuration (`.env`)
+
+| Variable | Required | Default | Purpose |
+| --- | --- | --- | --- |
+| `OPENROUTER_API_KEY` | ✅ | — | Your OpenRouter key (server-side only) |
+| `PORT` | — | `3000` | Port the server listens on (sample uses `3012`) |
+| `HOST` | — | `0.0.0.0` | Bind address; set `127.0.0.1` to restrict to this machine |
+| `LYRICS_MODEL` | — | `anthropic/claude-sonnet-5` | Model used for AI lyrics & auto-naming |
+| `ENHANCE_MODEL` | — | `anthropic/claude-sonnet-5` | Model used for AI arrangement |
+| `APP_TITLE`, `APP_URL` | — | MusicStudio | Sent to OpenRouter for attribution (safe to leave) |
+
+Music models used: `google/lyria-3-pro-preview` and `google/lyria-3-clip-preview`.
+
+## 🎛️ Using it
+
+1. Build a track with the pills (or type your own values), and optionally attach a reference image.
+2. Need words? Open **Vocals & Lyrics → ✨ Write lyrics with AI**, give a theme, and Claude drafts them.
+3. Want production direction? In **Arrangement**, click **🪄 Suggest arrangement**.
+4. Click **Preview prompt** (free) to review/edit the exact prompt, then **Generate music**.
+5. The result plays inline and is saved to your **Library** — download it, rename it, auto-name it
+   from the lyrics, or hit the **🎲 dice** to generate a variation.
+
+## 💸 Estimated cost
+
+Lyria is billed per generation; the Claude helpers add ~$0.01 each. Rough per-track cost:
+
+| | Music only | + AI lyrics / arrangement |
+| --- | --- | --- |
+| **Lyria 3 Clip** (30s) | ~$0.04 | up to ~$0.06 |
+| **Lyria 3 Pro** (≤3 min) | ~$0.08 | up to ~$0.10 |
+
+A reference image doesn't add a separate charge, and format (MP3/WAV) doesn't change the price.
+The header shows your **live remaining balance**; your OpenRouter dashboard is the source of truth.
+
+## 🌐 Access on your local network (optional)
+
+The server binds to all interfaces by default, so other devices on the same Wi-Fi/LAN can reach it
+at the **Network** URL printed on startup (e.g. `http://192.168.x.x:<PORT>`).
+
+- **Firewall:** the first outside connection may prompt to allow Node.js — allow it, or add an
+  inbound rule for your chosen port.
+- **⚠️ Security:** there's no login, and anyone who opens the URL can generate music on **your**
+  OpenRouter credit. Only expose it on a trusted network. To lock it to this machine only, set
+  `HOST=127.0.0.1` in `.env` and restart.
+
+## 🗂️ Project structure
+
+```
+server.js              Express server + API routes (holds the key, saves tracks)
+src/promptBuilder.js   Form data → Lyria prompt
+src/lyriaClient.js     OpenRouter/Lyria call + streaming audio reassembly
+src/lyricsClient.js    Claude → original lyrics
+src/enhanceClient.js   Claude → timestamped arrangement
+src/nameClient.js      Claude → track titles
 public/                Static UI (index.html, styles.css, app.js)
+downloads/             Saved tracks + library.json  (git-ignored, created at runtime)
 ```
 
-## Access on your local network
+## 🛠️ Tech stack
 
-The server binds to all interfaces, so other devices on the same Wi-Fi/LAN can
-reach it. On startup it prints the address to use, e.g.:
+Node.js + Express, vanilla HTML/CSS/JS (no build step). Music by **Google Lyria 3**, lyrics and
+arrangement by **Claude (Anthropic)**, all via **OpenRouter**.
 
-```
-Local:    http://localhost:3012
-Network:  http://192.168.0.53:3012
-```
+## 📝 Notes & limitations
 
-Open the **Network** URL from a phone or another computer on the same network.
-(This install runs on port **3012**, set via `PORT` in `.env`; the default is 3000.)
+- **SynthID watermark** — all Lyria audio contains an inaudible SynthID watermark.
+- **Content safety** — Google's filter blocks prompts that reference real artists or copyrighted
+  lyrics; the app surfaces a clear message when that happens.
+- **Experimental options** — the Greek genres/instruments/modes are marked *experimental*; Lyria
+  approximates them rather than reproducing them exactly.
+- **Streaming audio** — Lyria returns audio as a stream of base64 chunks, which the client
+  reassembles into a single MP3/WAV.
 
-- **Firewall:** the first time, Windows may ask to allow Node.js on private
-  networks — allow it. If it won't connect, add an inbound rule for the port
-  in use (TCP 3012 here).
-- **Security:** there's no login, and anyone who opens it can generate music
-  using **your** OpenRouter key (which costs money). Only expose it on a trusted
-  network. To lock it back to this machine only, set `HOST=127.0.0.1` in `.env`.
+## 🙌 Credits
 
-## Output format (MP3 / WAV)
+Developed by **Panos Vasilopoulos** & **Claude**.
 
-A **Format** selector sits next to the model. MP3 is the default high-quality
-master; **WAV (lossless)** is available on **Lyria 3 Pro only** — selecting WAV
-with the Clip model automatically falls back to MP3 (and warns you). Lyria has
-no separate "low/medium/high" quality tiers — it always returns one high-fidelity
-master, and the format choice picks the container.
+## 📄 License
 
-## Library / history
-
-Every generated track is saved to a local `downloads/` folder (git-ignored) and
-listed in a **Library** panel at the bottom of the page, newest first. For each
-track you can:
-
-- **Play** it inline
-- **Download** it
-- **Vary** it (dice icon) — regenerate from the same prompt with a fresh seed
-- **Auto-name** it (sparkles icon) — suggest a title: from the **lyrics** if the
-  track has them, otherwise a creative title invented from its **style/prompt**
-  (only disabled for old tracks with no stored prompt)
-- **Rename** it (updates both the display name and the file on disk)
-- **Delete** it (removes the file permanently)
-
-A small `downloads/library.json` manifest tracks names and prompts; audio files
-found on disk but not in the manifest are adopted automatically.
-
-## Notes on the response format
-
-The Lyria audio models on OpenRouter **require streaming** (`stream: true`).
-The audio is returned as base64 chunks over Server-Sent Events, which
-`src/lyriaClient.js` reassembles into a single MP3 (44.1/48 kHz stereo, with the
-non-audible SynthID watermark embedded as ID3 metadata). If a future model
-variant returns audio differently and reassembly finds nothing, the UI surfaces
-details under **Debug: raw response**.
-
-## Security & ethics
-
-- The API key stays server-side (in `.env`, git-ignored).
-- Lyria embeds a non-audible **SynthID** watermark in all output.
-- Prompts requesting specific real artists' voices or copyrighted lyrics are
-  blocked by the model.
+No license is specified yet, so default copyright applies. If you'd like others to reuse the code,
+add a license (e.g. [MIT](https://choosealicense.com/licenses/mit/)).
