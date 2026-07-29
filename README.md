@@ -19,6 +19,14 @@
 
 ---
 
+## About
+
+Music Studio is a **self-hosted web app for AI music creation**. You run it on your own machine,
+describe the track you want, and it generates the audio — plus original lyrics and production
+arrangements written by AI. It's built for musicians, hobbyists, and creators who want a fast,
+visual way to sketch ideas or produce finished tracks with **Google Lyria 3**, without wrestling
+with raw API calls.
+
 You run Music Studio on your own machine. It gives you a rich, pill-driven interface to describe
 a track — genre, era, mood, instruments, vocals, key, tempo — assembles a prompt following Lyria's
 own prompting framework, generates the audio, then plays, saves, and organizes it in a built-in
@@ -217,7 +225,36 @@ arrangement by **Claude (Anthropic)**, all via **OpenRouter**.
 
 Developed by **Panos Vasilopoulos** & **Claude**.
 
-## 📄 License
+## 📄 License &amp; usage
 
-No license is specified yet, so default copyright applies. If you'd like others to reuse the code,
-add a license (e.g. [MIT](https://choosealicense.com/licenses/mit/)).
+### The code — MIT
+
+Music Studio's source code is released under the **MIT License** — see [LICENSE](LICENSE). You may
+use, modify, and distribute it freely, **including commercially**, as long as you keep the
+copyright and license notice.
+
+**MIT © Panos Vasilopoulos**
+
+### The music you generate — governed by Lyria 3, not this license
+
+> **Important:** the MIT license covers **this app's code only — not the audio Lyria produces.**
+
+Generated tracks are subject to the terms of **Google Lyria 3** and **OpenRouter**, not to this
+project. Before you distribute or monetize generated music, review those terms yourself:
+
+- OpenRouter — [Terms](https://openrouter.ai/terms) and the
+  [Lyria 3 model page](https://openrouter.ai/google/lyria-3-pro-preview)
+- Google — the terms for **Lyria 3 / Vertex AI generative media** (including any commercial-use
+  conditions and required disclosures)
+
+Also keep in mind:
+
+- **SynthID watermark** — every Lyria track carries an inaudible SynthID watermark marking it as
+  AI-generated. Don't strip or misrepresent it.
+- **Content restrictions** — prompts referencing real artists or copyrighted lyrics are blocked by
+  Google's safety filter.
+- **Your responsibility** — you are responsible for how you use generated audio and for complying
+  with the model providers' terms and applicable law.
+
+> This is general information, not legal advice. Confirm your commercial-use rights against the
+> **current** Google and OpenRouter terms before selling or publishing generated tracks.

@@ -1,7 +1,9 @@
 {
   "name": "musicstudio",
   "version": "1.0.0",
-  "description": "Generate music with Lyria 3 Pro via the OpenRouter API",
+  "description": "Self-hosted web app to generate music with Google Lyria 3 via OpenRouter, with AI lyrics and arrangement.",
+  "author": "Panos Vasilopoulos",
+  "license": "MIT",
   "type": "module",
   "main": "server.js",
   "scripts": {
