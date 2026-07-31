@@ -9,6 +9,9 @@ downloads/
 *.mp3
 *.wav
 
+# Internal / not for publication
+BRANDING.md
+
 # Logs / OS cruft
 npm-debug.log*
 *.log
